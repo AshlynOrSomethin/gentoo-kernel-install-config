@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Simple mkinitcpio hook - regenerate all presets and update GRUB
+
+COMMAND="${1:?}"
+KERNEL_VERSION="${2:?}"
+
+# Only run on 'add' command
+[[ "$COMMAND" == "add" ]] || exit 0
+
+echo "Regenerating all initramfs images with mkinitcpio -P..."
+mkinitcpio -P
+
+echo "All initramfs images regenerated successfully"
+
+# Update GRUB configuration after initramfs generation
+if command -v grub-mkconfig >/dev/null 2>&1; then
+    echo "Updating GRUB configuration..."
+    grub-mkconfig -o /boot/grub/grub.cfg
+    echo "GRUB configuration updated"
+fi
